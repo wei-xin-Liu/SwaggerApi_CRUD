@@ -8,6 +8,7 @@ public class ApiService
 {
     private readonly HttpClient _httpClient;
     private string _token;
+    private DateTime _tokenExpirationTime;
 
     public ApiService(HttpClient httpClient)
     {
@@ -50,9 +51,34 @@ public class ApiService
 
         throw new HttpRequestException($"API request failed: {response.StatusCode}");
     }
+
+
+
+    public async Task<bool> ValidateTokenAsync(string baseUrl)
+    {
+        var response = await _httpClient.PostAsync($"{baseUrl}/api/Authenticate/ValidateToken", null);
+        if (response.IsSuccessStatusCode)
+        {
+            var expirationTimeString = await response.Content.ReadAsStringAsync();
+            if (DateTime.TryParse(expirationTimeString, out DateTime expirationTime))
+            {
+                _tokenExpirationTime = expirationTime;
+                return DateTime.UtcNow < expirationTime;
+            }
+        }
+        return false;
+    }
+
+    public bool IsTokenValid()
+    {
+        return DateTime.UtcNow < _tokenExpirationTime;
+    }
 }
 
-public class TokenResponse
-{
-    public string Token { get; set; }
-}
+//public class TokenResponse
+//{
+//    public string Token { get; set; }
+//}
+
+
+

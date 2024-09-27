@@ -46,26 +46,38 @@ public class SwaggerApiController : Controller
     {
         const string baseUrl = "https://exam-api.deta-it.com.tw";
 
-        if (await _apiService.AuthenticateAsync(baseUrl))
+        // 原本是每次都去抓取Token，現在因為進到畫面就將token直接存在header中，所以改成去抓token驗證即可
+        if (!_apiService.IsTokenValid())
         {
-            object data = new
+            if (!await _apiService.ValidateTokenAsync(baseUrl))
             {
-                pk = $"{MemberSetReq.pk}",
-                id = $"{MemberSetReq.id}",
-                pwd = $"{MemberSetReq.pwd}",
-                name = $"{MemberSetReq.name}",
-                gender = $"{MemberSetReq.gender}",
-                birthday = $"{MemberSetReq.birthday}",
-                remark = $"{MemberSetReq.remark}",
-                enable = $"{MemberSetReq.enable}",
-            };
-            await _apiService.CallApiAsync($"{baseUrl}/api/Member/Set", HttpMethod.Post, data);
-            return RedirectToAction(nameof(Index));  
+                if (!await _apiService.AuthenticateAsync(baseUrl))
+                {
+                    throw new UnauthorizedAccessException("無法驗證身份");
+                }
+            }
         }
-        else
+       
+        //if (await _apiService.AuthenticateAsync(baseUrl))
+        //{
+        object data = new
         {
-            return View("身分驗證失敗");
-        }
+            pk = $"{MemberSetReq.pk}",
+            id = $"{MemberSetReq.id}",
+            pwd = $"{MemberSetReq.pwd}",
+            name = $"{MemberSetReq.name}",
+            gender = $"{MemberSetReq.gender}",
+            birthday = $"{MemberSetReq.birthday}",
+            remark = $"{MemberSetReq.remark}",
+            enable = $"{MemberSetReq.enable}",
+        };
+        await _apiService.CallApiAsync($"{baseUrl}/api/Member/Set", HttpMethod.Post, data);
+        return RedirectToAction(nameof(Index));  
+        //}
+        //else
+        //{
+        //    return View("身分驗證失敗");
+        //}
     }
 
     // Get: Member/Details 讀取任何一筆指定Member資料 跳轉到Detail 畫面
@@ -73,26 +85,38 @@ public class SwaggerApiController : Controller
     {
         const string baseUrl = "https://exam-api.deta-it.com.tw";
 
-        if (await _apiService.AuthenticateAsync(baseUrl))
+        // 原本是每次都去抓取Token，現在因為進到畫面就將token直接存在header中，所以改成去抓token驗證即可
+        if (!_apiService.IsTokenValid())
         {
-            if (id == null)
+            if (!await _apiService.ValidateTokenAsync(baseUrl))
             {
-                return NotFound();
-            }
-            else
-            {
-                object data = new
+                if (!await _apiService.AuthenticateAsync(baseUrl))
                 {
-                    pk = $"{id}"
-                };
-                var result = await _apiService.CallApiAsync($"{baseUrl}/api/Member/Get", HttpMethod.Post, data);
-                return View(JsonConvert.DeserializeObject<MemberGetResp>(result));
+                    throw new UnauthorizedAccessException("無法驗證身份");
+                }
             }
+        }
+
+        //if (await _apiService.AuthenticateAsync(baseUrl))
+        //{
+        if (id == null)
+        {
+            return NotFound();
         }
         else
         {
-            return View("身分驗證失敗");
+            object data = new
+            {
+                pk = $"{id}"
+            };
+            var result = await _apiService.CallApiAsync($"{baseUrl}/api/Member/Get", HttpMethod.Post, data);
+            return View(JsonConvert.DeserializeObject<MemberGetResp>(result));
         }
+        //}
+        //else
+        //{
+        //    return View("身分驗證失敗");
+        //}
     }
 
     // Get: Member/Edit 讀取任何一筆指定Member資料 跳轉到 Edit 畫面
@@ -100,26 +124,38 @@ public class SwaggerApiController : Controller
     {
         const string baseUrl = "https://exam-api.deta-it.com.tw";
 
-        if (await _apiService.AuthenticateAsync(baseUrl))
+        // 原本是每次都去抓取Token，現在因為進到畫面就將token直接存在header中，所以改成去抓token驗證即可
+        if (!_apiService.IsTokenValid())
         {
-            if (id == null)
+            if (!await _apiService.ValidateTokenAsync(baseUrl))
             {
-                return NotFound();
-            }
-            else
-            {
-                object data = new
+                if (!await _apiService.AuthenticateAsync(baseUrl))
                 {
-                    pk = $"{id}"
-                };
-                var result = await _apiService.CallApiAsync($"{baseUrl}/api/Member/Get", HttpMethod.Post, data);
-                return View(JsonConvert.DeserializeObject<MemberGetResp>(result));
+                    throw new UnauthorizedAccessException("無法驗證身份");
+                }
             }
+        }
+
+        //if (await _apiService.AuthenticateAsync(baseUrl))
+        //{
+        if (id == null)
+        {
+            return NotFound();
         }
         else
         {
-            return View("身分驗證失敗");
+            object data = new
+            {
+                pk = $"{id}"
+            };
+            var result = await _apiService.CallApiAsync($"{baseUrl}/api/Member/Get", HttpMethod.Post, data);
+            return View(JsonConvert.DeserializeObject<MemberGetResp>(result));
         }
+        //}
+        //else
+        //{
+        //    return View("身分驗證失敗");
+        //}
     }
 
 
@@ -128,25 +164,37 @@ public class SwaggerApiController : Controller
     {
         const string baseUrl = "https://exam-api.deta-it.com.tw";
 
-        if (await _apiService.AuthenticateAsync(baseUrl))
+        // 原本是每次都去抓取Token，現在因為進到畫面就將token直接存在header中，所以改成去抓token驗證即可
+        if (!_apiService.IsTokenValid())
         {
-            if (id == null)
+            if (!await _apiService.ValidateTokenAsync(baseUrl))
             {
-                return NotFound();
-            }
-            else
-            {
-                object data = new
+                if (!await _apiService.AuthenticateAsync(baseUrl))
                 {
-                    pk = $"{id}"
-                };
-                var result = await _apiService.CallApiAsync($"{baseUrl}/api/Member/Delete", HttpMethod.Post, data);
-                return RedirectToAction(nameof(Index));
+                    throw new UnauthorizedAccessException("無法驗證身份");
+                }
             }
+        }
+
+        //if (await _apiService.AuthenticateAsync(baseUrl))
+        //{
+        if (id == null)
+        {
+            return NotFound();
         }
         else
         {
-            return View("身分驗證失敗");
+            object data = new
+            {
+                pk = $"{id}"
+            };
+            var result = await _apiService.CallApiAsync($"{baseUrl}/api/Member/Delete", HttpMethod.Post, data);
+            return RedirectToAction(nameof(Index));
         }
+        //}
+        //else
+        //{
+        //    return View("身分驗證失敗");
+        //}
     }
 }
